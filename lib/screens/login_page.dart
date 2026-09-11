@@ -49,7 +49,7 @@ class _LoginPage extends State<LoginPage> {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: Colors.blue,
+                      color: Color.fromARGB(255, 131, 87, 217),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -85,7 +85,7 @@ class _LoginPage extends State<LoginPage> {
                       hintText: 'Email or Username',
                       prefixIcon: const Icon(
                         Icons.email_outlined,
-                        color: Colors.purple,
+                        color: Color.fromARGB(255, 131, 87, 217),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -122,7 +122,7 @@ class _LoginPage extends State<LoginPage> {
                       hintText: 'Password',
                       prefixIcon: const Icon(
                         Icons.lock_outline,
-                        color: Colors.purple,
+                        color: Color.fromARGB(255, 131, 87, 217),
                       ),
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -146,7 +146,7 @@ class _LoginPage extends State<LoginPage> {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                          color: Colors.purple,
+                          color: Color.fromARGB(255, 131, 87, 217),
                           width: 2,
                         ),
                       ),
@@ -169,7 +169,7 @@ class _LoginPage extends State<LoginPage> {
                     child: ElevatedButton(
                       onPressed: _isLoading ? null : _handleLogin,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
+                        backgroundColor: Color.fromARGB(255, 131, 87, 217),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -196,7 +196,7 @@ class _LoginPage extends State<LoginPage> {
                     },
                     child: const Text(
                       'Forgot Password?',
-                      style: TextStyle(color: Colors.purple, fontSize: 14),
+                      style: TextStyle(color: Color.fromARGB(255, 131, 87, 217), fontSize: 14),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -257,11 +257,22 @@ class _LoginPage extends State<LoginPage> {
                         child: const Text(
                           'Sign Up',
                           style: TextStyle(
-                            color: Colors.purple,
+                            color: Color.fromARGB(255, 131, 87, 217),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
+                      SizedBox(width: 2,),
+                      Text("/ "),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyHomePage(  )));
+                        },
+                        child: Text("Guest Mode",style: TextStyle(
+                          color: Color.fromARGB(255, 131, 87, 217),
+                          fontWeight: FontWeight.w600
+                        ),),
+                      )
                     ],
                   ),
                 ],

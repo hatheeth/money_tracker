@@ -49,16 +49,35 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
         body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromARGB(255, 131, 87, 217),
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.manage_accounts), label: "Manage"),
-          
-        ],
-      ),
+       bottomNavigationBar: BottomAppBar(
+    shape: const CircularNotchedRectangle(), // notch for FAB
+    notchMargin: 8.0,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () {
+            setState(() => _selectedIndex = 0);
+          },
+        ),
+        const SizedBox(width: 40), // space for middle button
+        IconButton(
+          icon: const Icon(Icons.manage_accounts),
+          onPressed: () {
+            setState(() => _selectedIndex = 1);
+          },
+        ),
+      ],
+    ),
+  ),
+  floatingActionButton: FloatingActionButton(
+    onPressed: () {
+      // action for middle button
+    },
+    child: const Icon(Icons.add),
+  ),
+  floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

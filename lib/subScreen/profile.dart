@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../providers/amount_provider.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -26,7 +27,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
  
   final TextEditingController _budgetController = TextEditingController(
-    text: '10,000',
+    text: '0',
   );
   final TextEditingController _amountController = TextEditingController(text: "100");
   double _currentSpent = 1300;
