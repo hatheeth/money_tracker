@@ -229,12 +229,6 @@ class _LoginPage extends State<LoginPage> {
                           ),
                           text: 'Continue with Google',
                           onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const MyHomePage(),
-                              ),
-                            );
                           },
                         ),
                       ),

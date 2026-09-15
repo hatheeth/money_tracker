@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: 3.4.3
+  intl: ^0.20.3
 
   cupertino_icons: ^1.0.8
 
@@ -24,5 +25,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+      - assets/food.png
+      - assets/transport.png
+      - assets/shopping.png
+      
 
  

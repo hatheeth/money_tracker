@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/amount_provider.dart';
+import '../screens/login_page.dart';
+import 'package:flutter/services.dart';
 
-class Profile extends StatefulWidget {
+class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
 
   @override
-  State<Profile> createState() => _ProfileState();
+  ConsumerState<Profile> createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends ConsumerState<Profile> {
   // Starting on Profile to show the requested UI
 
   @override
@@ -17,49 +20,59 @@ class _ProfileState extends State<Profile> {
   }
 }
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  ConsumerState<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
- 
+class _ProfilePageState extends ConsumerState<ProfilePage> {
   final TextEditingController _budgetController = TextEditingController(
     text: '0',
   );
-  final TextEditingController _amountController = TextEditingController(text: "100");
-  double _currentSpent = 1300;
-  double _totalBudget = 10000;
+  final TextEditingController _amountController = TextEditingController(
+    text: "100",
+  );
+
+  final TextEditingController _currencyController = TextEditingController(
+    text: "",
+  );
+  int _currentSpent = 1300;
 
   @override
   Widget build(BuildContext context) {
+    
+    double _totalBudget = ref.watch(budgetProvider);
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            // 2. Main Content Area
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  children: [
+                    // Budget Progress Ring Card
+                    _buildProgressCard(),
+                    const SizedBox(height: 20),
 
-          // 2. Main Content Area
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  // Budget Progress Ring Card
-                  _buildProgressCard(),
-                  const SizedBox(height: 20),
+                    // Set Budget Card
+                    _buildSetBudgetCard(),
+                    const SizedBox(height: 24),
 
-                  // Set Budget Card
-                  _buildSetBudgetCard(),
-                  const SizedBox(height: 24),
+                    _buildSetCurrency(),
+                    const SizedBox(height: 24),
 
-                  // Settings List
-                  _buildSettingsList(),
-                ],
+                    // Settings List
+                    _buildSettingsList(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -67,7 +80,9 @@ class _ProfilePageState extends State<ProfilePage> {
   // --- UI Components ---
 
   Widget _buildProgressCard() {
+    double _totalBudget = ref.watch(budgetProvider);
     double progress = _currentSpent / _totalBudget;
+    final currency = ref.watch(currencyProvier);
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -114,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'LKR ${_currentSpent.toStringAsFixed(0)}',
+                  '$currency ${_currentSpent.toStringAsFixed(0)}',
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -122,7 +137,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 Text(
-                  '/ LKR ${_totalBudget.toStringAsFixed(0)}',
+                  '/ $currency ${_totalBudget.toStringAsFixed(0)}',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ],
@@ -134,6 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildSetBudgetCard() {
+    final currency = ref.watch(currencyProvier);
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -156,9 +172,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const SizedBox(height: 16),
 
-          // Week / Month Toggle
-
-          // Amount Input & Save Button
           Row(
             children: [
               Expanded(
@@ -166,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   controller: _budgetController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    prefixText: 'LKR ',
+                    prefixText: '$currency ',
                     prefixStyle: const TextStyle(
                       fontSize: 16,
                       color: Colors.black87,
@@ -188,14 +201,24 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () {
                   // Handle save logic here
                   setState(() {
-                    _totalBudget =
+                    ref.read(budgetProvider.notifier).state =
                         double.tryParse(
                           _budgetController.text.replaceAll(',', ''),
                         ) ??
-                        10000;
+                        0;
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Amount saved successfully!')),
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Success"),
+                      content: const Text("Amount saved successfully!"),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -218,7 +241,94 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  
+  Widget _buildSetCurrency() {
+    final currency = ref.watch(currencyProvier);
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Set Currency',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  inputFormatters: [UpperCaseLetterFormatter()],
+                  controller: _currencyController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    
+                    hintText: "$currency",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              ElevatedButton(
+                onPressed: () {
+                  // Handle save logic here
+                  setState(() {
+                    ref.read(currencyProvier.notifier).state =
+                        _currencyController.text;
+                  });
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text("Success"),
+                      content: const Text(
+                        "Currency Format saved successfully!",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF7E57C2),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text('Save'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildSettingsList() {
     final settings = [
@@ -226,6 +336,16 @@ class _ProfilePageState extends State<ProfilePage> {
       {'title': 'Notifications', 'icon': Icons.notifications_outlined},
       {'title': 'Privacy', 'icon': Icons.lock_outline},
       {'title': 'Help', 'icon': Icons.help_outline},
+      {
+        'title': 'Manage Categories',
+        'icon': Icons.category_outlined,
+        'onTap': () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        },
+      },
     ];
 
     return Container(
@@ -249,12 +369,30 @@ class _ProfilePageState extends State<ProfilePage> {
               style: const TextStyle(fontSize: 16),
             ),
             trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
-            onTap: () {
-              // Handle navigation to settings screens
-            },
+            onTap: item['onTap'] as void Function()?,
           );
         }).toList(),
       ),
+    );
+  }
+}
+
+class UpperCaseLetterFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    String filtered = newValue.text.toUpperCase().replaceAll(
+      RegExp(r'[^A-Z]'),
+      '',
+    ); // only A-Z
+    if (filtered.length > 3) {
+      filtered = filtered.substring(0, 3); // limit to 3 chars
+    }
+    return TextEditingValue(
+      text: filtered,
+      selection: TextSelection.collapsed(offset: filtered.length),
     );
   }
 }
