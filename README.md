@@ -45,12 +45,12 @@ To ensure a seamless user experience, this app utilizes a dual-database strategy
 
 ## 📱 Screenshots
 
+## 📸 Screenshots
+
 | Home Dashboard | Add Expense | Manage |
-| :---: | :---: | :---: |
-| *<img width="1080" height="2424" alt="Screenshot_1789529212" src="https://github.com/user-attachments/assets/863a046a-21c1-427a-a591-4da93be22e5b" />
-* | *<img width="1080" height="2424" alt="Screenshot_1789529090" src="https://github.com/user-attachments/assets/de69bd7b-8b4e-4ae6-8837-33875da11306" />
-* | *<img width="1080" height="2424" alt="Screenshot_1789529123" src="https://github.com/user-attachments/assets/5fcf8652-dcdf-47fd-91ef-79ffa626e9bc" />
-* |
+| :-------------: | :----------: | :-----: |
+| <img width="1080" height="2424" alt="Home Dashboard" src="https://github.com/user-attachments/assets/863a046a-21c1-427a-a591-4da93be22e5b" /> | <img width="1080" height="2424" alt="Add Expense" src="https://github.com/user-attachments/assets/de69bd7b-8b4e-4ae6-8837-33875da11306" /> | <img width="1080" height="2424" alt="Manage" src="https://github.com/user-attachments/assets/5fcf8652-dcdf-47fd-91ef-79ffa626e9bc" /> |
+
 
 ## ⚙️ Setup and Installation
 
