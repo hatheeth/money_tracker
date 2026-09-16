@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/amount_provider.dart';
 import '../screens/login_page.dart';
 import 'package:flutter/services.dart';
+import '../database/database_helper.dart';
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
@@ -31,19 +32,17 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   final TextEditingController _budgetController = TextEditingController(
     text: '0',
   );
-  final TextEditingController _amountController = TextEditingController(
-    text: "100",
-  );
+  
 
   final TextEditingController _currencyController = TextEditingController(
     text: "",
   );
-  int _currentSpent = 1300;
+  
 
   @override
   Widget build(BuildContext context) {
     
-    double _totalBudget = ref.watch(budgetProvider);
+    
     return Scaffold(
       body: SafeArea(
         child: CustomScrollView(
@@ -80,8 +79,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   // --- UI Components ---
 
   Widget _buildProgressCard() {
-    double _totalBudget = ref.watch(budgetProvider);
-    double progress = _currentSpent / _totalBudget;
+    final currentSpent = ref.watch(expenseProvider);
+    double totalBudget = ref.watch(budgetProvider);
+    double progress = currentSpent / totalBudget;
     final currency = ref.watch(currencyProvier);
     return Container(
       padding: const EdgeInsets.all(24),
@@ -129,7 +129,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '$currency ${_currentSpent.toStringAsFixed(0)}',
+                  '$currency ${currentSpent.toStringAsFixed(0)}',
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -137,7 +137,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   ),
                 ),
                 Text(
-                  '/ $currency ${_totalBudget.toStringAsFixed(0)}',
+                  '/ $currency ${totalBudget.toStringAsFixed(0)}',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
               ],
@@ -206,6 +206,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           _budgetController.text.replaceAll(',', ''),
                         ) ??
                         0;
+
+                    DatabaseHelper.instance.saveBudget(double.tryParse(
+                          _budgetController.text.replaceAll(',', ''),
+                        ) ??
+                        0);
                   });
                   showDialog(
                     context: context,
@@ -293,6 +298,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                   setState(() {
                     ref.read(currencyProvier.notifier).state =
                         _currencyController.text;
+                        DatabaseHelper.instance.saveCurrency(_currencyController.text);
                   });
                   showDialog(
                     context: context,

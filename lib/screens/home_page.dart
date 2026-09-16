@@ -4,6 +4,7 @@ import '../subScreen/home.dart';
 import '../subScreen/profile.dart';
 import '../providers/amount_provider.dart';
 import '../util/expenseAdd.dart';
+import '../database/database_helper.dart';
 
 class MyHomePage extends ConsumerStatefulWidget {
   const MyHomePage({super.key});
@@ -16,6 +17,45 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
   int _selectedIndex = 0;
   String selectedCategory = 'Food';
   final List<Widget> _pages = [Home(), Profile()];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBudget();
+    _loadCurrency();
+    _loadList();
+    _loadMoney();
+
+    
+  }
+
+  Future<void> _loadBudget() async {
+    final db = DatabaseHelper.instance;
+    final savedBudget = await db.loadBudget();
+    if (savedBudget != null) {
+      ref.read(budgetProvider.notifier).state = savedBudget;
+    }
+  }
+
+  Future<void> _loadCurrency() async {
+    final db = DatabaseHelper.instance;
+    final savedCurrency = await db.loadCurrency();
+    if (savedCurrency != null) {
+      ref.read(currencyProvier.notifier).state = savedCurrency;
+    }
+  }
+
+  Future<void> _loadList() async {
+    final expense = await DatabaseHelper.instance.loadExpenseList();
+    ref.read(expenseListProvider.notifier).state = expense;
+  }
+
+  Future<void> _loadMoney() async {
+    final money = await DatabaseHelper.instance.loadMoney();
+    if (money != null) {
+      ref.read(expenseProvider.notifier).state = money;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

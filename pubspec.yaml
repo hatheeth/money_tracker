@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
   flutter_riverpod: 3.4.3
   intl: ^0.20.3
+  sqflite: ^2.4.4
+  path: 1.9.1
 
   cupertino_icons: ^1.0.8
 
@@ -29,6 +31,11 @@ flutter:
       - assets/food.png
       - assets/transport.png
       - assets/shopping.png
+      - assets/clothe.png
+      - assets/education.png
+      - assets/healthcare.png
+      - assets/snack.png
+      - assets/utilities.png
       
 
  

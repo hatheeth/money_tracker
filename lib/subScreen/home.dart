@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/amount_provider.dart';
 import 'package:intl/intl.dart';
+import '../database/database_helper.dart';
 
 class Home extends ConsumerStatefulWidget {
   const Home({super.key});
@@ -18,7 +19,7 @@ class _Home extends ConsumerState<Home> {
     final currency = ref.watch(currencyProvier);
     final balance = budget - totalExpense;
     final expenseList = ref.watch(expenseListProvider);
-  
+
     DateTime now = DateTime.now();
     String formattedTime = DateFormat('hh:mm a').format(now);
 
@@ -52,7 +53,7 @@ class _Home extends ConsumerState<Home> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 10,),
+                    const SizedBox(height: 10),
                     const Text(
                       "Balance:",
                       style: TextStyle(
@@ -122,9 +123,12 @@ class _Home extends ConsumerState<Home> {
                 itemCount: expenseList.length,
                 itemBuilder: (context, index) {
                   final item = expenseList[index];
-                  String formattedTime = DateFormat(
-                    'hh:mm a',
-                  ).format(item['time']);
+                  String formattedTime = DateFormat('hh:mm a').format(
+                    item['time'] is String
+                        ? DateTime.parse(item['time'])
+                        : item['time'] as DateTime,
+                  );
+
                   return Card(
                     margin: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -139,8 +143,43 @@ class _Home extends ConsumerState<Home> {
                       subtitle: Text(
                         '${item['category']} - ${item['amount']} $currency',
                       ),
-                      trailing: Row(mainAxisSize: MainAxisSize.min,
-                      children: [Icon(Icons.delete_outline, color: Colors.red, size: 30,),SizedBox(width: 5,),Text(formattedTime), ],),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.delete_outline,
+                              color: Colors.red,
+                              size: 30,
+                            ),
+                            onPressed: () async {
+                              final id = item['id'];
+
+                              // Delete from DB
+                              await DatabaseHelper.instance.deleteExpense(id);
+
+
+                              // Update provider
+                              ref
+                                  .read(expenseListProvider.notifier)
+                                  .state = expenseList
+                                  .where((e) => e['id'] != id)
+                                  .toList();
+
+                              
+
+                              // Update total expense
+                              final amount = item['amount'] as double;
+                              ref.read(expenseProvider.notifier).state =
+                                  ref.read(expenseProvider) - amount;
+
+                              await DatabaseHelper.instance.saveMoney(ref.read(expenseProvider));
+                            },
+                          ),
+                          SizedBox(width: 5),
+                          Text(formattedTime),
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -155,17 +194,25 @@ class _Home extends ConsumerState<Home> {
   Widget _buildCategoryIcon(String category) {
     switch (category) {
       case "Food":
-        return Image.asset(
-          'assets/food.png',
-          width: 40,
-          height: 40,
-        );
+        return Image.asset('assets/food.png', width: 40, height: 40);
       case "Travel":
-        return Image.asset('assets/transport.png', width: 40, height: 40,);
-      
+        return Image.asset('assets/transport.png', width: 40, height: 40);
+
       case "Shopping":
-        return Image.asset('assets/shopping.png', width: 40, height: 40,);
-      default: 
+        return Image.asset('assets/shopping.png', width: 40, height: 40);
+
+      case "Clothe":
+        return Image.asset('assets/clothe.png', width: 40, height: 40);
+
+      case "Utilities":
+        return Image.asset('assets/utilities.png', width: 40, height: 40);
+
+      case "Healthcare":
+        return Image.asset('assets/healthcare.png', width: 40, height: 40);
+
+      case "Education":
+        return Image.asset('assets/education.png', width: 40, height: 40);
+      default:
         return const Icon(Icons.category);
     }
   }

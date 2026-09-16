@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/amount_provider.dart';
+import '../database/database_helper.dart';
 
 class AddExpenseSheet extends ConsumerStatefulWidget {
   const AddExpenseSheet({super.key});
@@ -42,10 +43,13 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
           TextField(
             controller: amountController,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: "Amount",border: OutlineInputBorder(
+            decoration: InputDecoration(
+              labelText: "Amount",
+              border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.grey.shade300),
-              ),),
+              ),
+            ),
           ),
           const SizedBox(height: 8),
           DropdownButton<String>(
@@ -54,8 +58,11 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
               'Food',
               'Travel',
               'Shopping',
-              'Cloth',
+              'Clothe',
               'Snack',
+              'Utilities',
+              'Healthcare',
+              'Education',
               'Other',
             ].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
             onChanged: (value) {
@@ -66,8 +73,9 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               final newExpense = {
+                'id': DateTime.now().millisecondsSinceEpoch.toString(),
                 'title': titleController.text,
                 'amount': double.tryParse(amountController.text) ?? 0,
                 'category': selectedCategory,
@@ -77,8 +85,15 @@ class _AddExpenseSheetState extends ConsumerState<AddExpenseSheet> {
                 ...currentList,
                 newExpense,
               ];
-              ref.read(expenseProvider.notifier).state = (double.tryParse(amountController.text) ?? 0) + totalExpense;
-              
+
+              await DatabaseHelper.instance.saveExpenseList(
+                ref.read(expenseListProvider),
+              );
+              ref.read(expenseProvider.notifier).state =
+                  (double.tryParse(amountController.text) ?? 0) + totalExpense;
+
+                await DatabaseHelper.instance.saveMoney(ref.read(expenseProvider));
+
               Navigator.pop(context);
             },
             child: const Text("Add"),
