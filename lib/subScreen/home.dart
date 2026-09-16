@@ -20,8 +20,7 @@ class _Home extends ConsumerState<Home> {
     final balance = budget - totalExpense;
     final expenseList = ref.watch(expenseListProvider);
 
-    DateTime now = DateTime.now();
-    String formattedTime = DateFormat('hh:mm a').format(now);
+    
 
     return Scaffold(
       body: SafeArea(
