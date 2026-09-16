@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # money_tracker
 
 A new Flutter project.
@@ -35,7 +35,7 @@ A sleek, cross-platform expense tracking application built with **Flutter**. Thi
 - **Authentication:** Firebase Auth (Google Sign-In)
 - **Cloud Database:** Firebase Firestore
 - **Local Database:** SQLite (`sqflite`)
-- **State Management:** Provider / Riverpod *(Update based on what you used)*
+- **State Management:** Riverpod 
 
 ## ️ Architecture: Offline-First Approach
 
@@ -45,14 +45,17 @@ To ensure a seamless user experience, this app utilizes a dual-database strategy
 
 ## 📱 Screenshots
 
-| Home Dashboard | Add Expense | History |
+| Home Dashboard | Add Expense | Manage |
 | :---: | :---: | :---: |
-| *[Insert Image]* | *[Insert Image]* | *[Insert Image]* |
+| *<img width="1080" height="2424" alt="Screenshot_1789529212" src="https://github.com/user-attachments/assets/863a046a-21c1-427a-a591-4da93be22e5b" />
+* | *<img width="1080" height="2424" alt="Screenshot_1789529090" src="https://github.com/user-attachments/assets/de69bd7b-8b4e-4ae6-8837-33875da11306" />
+* | *<img width="1080" height="2424" alt="Screenshot_1789529123" src="https://github.com/user-attachments/assets/5fcf8652-dcdf-47fd-91ef-79ffa626e9bc" />
+* |
 
 ## ⚙️ Setup and Installation
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+   [git clone https://github.com/your-username/your-repo-name.git
+   cd your-repo-name](https://github.com/hatheeth/money_tracker.git)
 >>>>>>> d5b578eda83e74964808f2c6b08b7187f058278f
